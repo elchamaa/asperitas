@@ -20,8 +20,8 @@ exports.register = async (req, res, next) => {
   }
 
   try {
-    const { username, password } = req.body;
-    const user = await User.create({ username, password });
+    const { username, password, ip } = req.body;
+    const user = await User.create({ username, password, ip });
     const token = createAuthToken(user.toJSON());
     res.status(201).json({ token });
   } catch (err) {
@@ -66,6 +66,12 @@ exports.validate = method => {
       body('username').custom(async username => {
         const exists = await User.countDocuments({ username });
         if (exists) throw new Error('already exists');
+      })
+    );
+    errors.push(
+      body('ip').custom(async ip => {
+        const exists = await User.countDocuments({ ip });
+        if (exists > 2) throw new Error('already exists');
       })
     );
   }

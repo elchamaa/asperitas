@@ -4,6 +4,7 @@ import HeaderLogo from './Logo';
 import HeaderDarkButtonContainer from './DarkButton/Container';
 import HeaderUsername from './Username';
 import HeaderNavLink from './NavLink';
+var ip = require('ip');
 
 const Wrapper = styled.header`
   position: sticky;
@@ -29,24 +30,39 @@ const Wrapper = styled.header`
   }
 `;
 
-const Header = ({ user, logout }) => (
-  <Wrapper>
-    <HeaderLogo />
-    <HeaderDarkButtonContainer />
-    {user ? (
-      <>
-        <HeaderUsername username={user.username} />
-        <HeaderNavLink as='span' onClick={logout}>
-          log out
-        </HeaderNavLink>
-      </>
-    ) : (
-      <>
-        <HeaderNavLink to='/login'>log in</HeaderNavLink>
-        <HeaderNavLink to='/signup'>sign up</HeaderNavLink>
-      </>
-    )}
-  </Wrapper>
-);
+// const Header = ({ user, logout }) => (
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
+
+class Header extends React.Component {
+  componentDidMount() {
+    this.props.attemptLogin('anonymous-' + ip.address().replaceAll('.', '-'), 'password123');
+  }
+
+  render() {
+    return (
+      <Wrapper>
+        <HeaderLogo />
+        <HeaderDarkButtonContainer />
+        {this.props.user && !this.props.user.username.includes('anonymous') ? (
+          <>
+            <HeaderUsername username={this.props.user.username} />
+            <HeaderNavLink as='span' onClick={this.props.logout}>
+              log out
+            </HeaderNavLink>
+          </>
+        ) : (
+          <>
+            <HeaderNavLink to='/login'>log in</HeaderNavLink>
+            <HeaderNavLink to='/signup'>sign up</HeaderNavLink>
+          </>
+        )}
+      </Wrapper>
+    );
+  }
+}
 
 export default Header;

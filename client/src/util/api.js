@@ -72,8 +72,8 @@ export async function login (username, password) {
   return json.token;
 }
 
-export async function signup (username, password) {
-  const json = await methods.post('register', { username, password });
+export async function signup (username, password, ip) {
+  const json = await methods.post('register', { username, password, ip });
   return json.token;
 }
 

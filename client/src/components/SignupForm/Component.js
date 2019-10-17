@@ -4,6 +4,7 @@ import Form from '../shared/form/Form';
 import renderField from '../shared/form/renderField';
 import { usernameValidator, passwordValidator } from '../../util/validators';
 import SubmitButton from '../shared/form/SubmitButton';
+var ip = require('ip');
 
 class SignupForm extends React.Component {
   componentDidMount() {
@@ -15,11 +16,13 @@ class SignupForm extends React.Component {
   }
 
   redirectIfLoggedIn() {
-    if (this.props.token) this.props.history.push('/');
+    if (!this.props.user.username.includes('anonymous')) {
+      if (this.props.token) this.props.history.push('/');
+    }
   }
 
   onSubmit = ({ username, password }) => {
-    this.props.attemptSignup(username, password);
+    this.props.attemptSignup(username, password, ip.address());
   };
 
   render() {
